@@ -1,0 +1,20 @@
+version: "3"
+
+services:
+  djgo_app:
+    build: 
+      context: .
+      dockerfile: ./dockerfiles/python/Dockerfile
+    container_name: ${DJGO_CONTAINER_NAME}
+    ports:
+      - ${DJGO_IPORT}:${DJGO_OPORT}
+    volumes:
+      - ./app:/app
+    environment:
+      - DJGO_IPORT=${DJGO_IPORT}
+      - DJGO_OPORT=${DJGO_OPORT}
+    command: >
+      python3 .././python-entrypoint.py
+
+
+
