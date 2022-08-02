@@ -1,6 +1,8 @@
 version: "3"
 
 services:
+
+
   djgo_app:
     build: 
       context: .
@@ -17,4 +19,11 @@ services:
       python3 .././python-entrypoint.py
 
 
-
+  djgo_db:
+    build:
+      context: .
+      dockerfile: ./dockerfiles/db/Dockerfile
+    container_name: ${DJGO_DB_CONTAINER_NAME}
+    ports:
+      - ${DJGO_DB_IPORT}:${DJGO_DB_OPORT}
+    
