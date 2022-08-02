@@ -5,7 +5,9 @@ ENV PYTHONUNBUFFERED 1
 RUN apk update && apk add \
     py3-pip \
     gcc \
-    python3-dev
+    python3-dev \
+    postgresql-dev \
+    musl-dev
 
 COPY ./app /app
 RUN pip3 install -r ./app/requirements.txt

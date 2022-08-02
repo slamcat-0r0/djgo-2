@@ -1,3 +1,4 @@
+import os
 """
 Django settings for project project.
 
@@ -25,7 +26,7 @@ SECRET_KEY = 'django-insecure-2y%$6ly5z22@9d-8j=-%3xex1(e4)-eu-x2r-u+w$^6+ha%y3j
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = os.environ.get("DJGO_ALLOWED_HOSTS").split(" ")
 
 
 # Application definition
@@ -73,11 +74,16 @@ WSGI_APPLICATION = 'project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+  'default': {
+    'ENGINE': 'django.db.backends.postgresql',
+    'HOST': os.environ.get('DJGO_DB_HOST'),
+    'PORT': os.environ.get('DJGO_DB_PORT'),
+    'NAME': os.environ.get('DJGO_DB_NAME'),
+    'USER': os.environ.get('DJGO_DB_USER'),
+    'PASSWORD': os.environ.get('DJGO_DB_PASSWD'),
+  }
 }
 
 

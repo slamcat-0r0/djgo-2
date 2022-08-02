@@ -15,15 +15,27 @@ services:
     environment:
       - DJGO_IPORT=${DJGO_IPORT}
       - DJGO_OPORT=${DJGO_OPORT}
+      - DJGO_DB_HOST=${DJGO_DB_HOST}
+      - DJGO_DB_NAME=${DJGO_DB_NAME}
+      - DJGO_DB_USER=${DJGO_DB_USER}
+      - DJGO_DB_PASSWD=${DJGO_DB_PASSWD}
+      - SECRET_KEY=${SECRET_KEY}
+      - DJGO_ALLOWED_HOSTS=${DJGO_ALLOWED_HOSTS}
+
     command: >
       python3 .././python-entrypoint.py
+    depends_on:
+      - djgo_db
 
 
   djgo_db:
-    build:
-      context: .
-      dockerfile: ./dockerfiles/db/Dockerfile
-    container_name: ${DJGO_DB_CONTAINER_NAME}
-    ports:
-      - ${DJGO_DB_IPORT}:${DJGO_DB_OPORT}
+    image: postgres:13.0-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_DB=${DJGO_DB_NAME}
+      - POSTGRES_USER=${DJGO_DB_USER}
+      - POSTGRES_PASSWORD=${DJGO_DB_PASSWD}
     
+volumes:
+  postgres_data:
