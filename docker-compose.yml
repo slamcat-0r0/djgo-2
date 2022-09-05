@@ -8,25 +8,33 @@ services:
       context: .
       dockerfile: ./dockerfiles/python/Dockerfile
     container_name: ${DJGO_CONTAINER_NAME}
-    ports:
-      - ${DJGO_IPORT}:${DJGO_OPORT}
+    # ports:
+    #   - ${DJGO_IPORT}:${DJGO_OPORT}
+    expose:
+      - ${DJGO_OPORT}
     volumes:
       - ./app:/app
+      - static_volume:/app/staticfiles
     environment:
+      - DJGO_ADMIN_LOGIN=${DJGO_ADMIN_LOGIN}
+      - DJGO_ADMIN_EMAIL=${DJGO_ADMIN_EMAIL}
+      - DJGO_ADMIN_PASSWD=${DJGO_ADMIN_PASSWD}
+      - DJGO_CSRF_TRUSTED_ORIGINS=${DJGO_CSRF_TRUSTED_ORIGINS}
       - DJGO_IPORT=${DJGO_IPORT}
       - DJGO_OPORT=${DJGO_OPORT}
       - DJGO_DB_HOST=${DJGO_DB_HOST}
       - DJGO_DB_NAME=${DJGO_DB_NAME}
       - DJGO_DB_USER=${DJGO_DB_USER}
+      - DJGO_DB_OPORT=${DJGO_DB_OPORT}
       - DJGO_DB_PASSWD=${DJGO_DB_PASSWD}
       - SECRET_KEY=${SECRET_KEY}
       - DJGO_ALLOWED_HOSTS=${DJGO_ALLOWED_HOSTS}
 
     command: >
       python3 .././python-entrypoint.py
+      
     depends_on:
       - djgo_db
-
 
   djgo_db:
     image: postgres:13.0-alpine
@@ -36,6 +44,19 @@ services:
       - POSTGRES_DB=${DJGO_DB_NAME}
       - POSTGRES_USER=${DJGO_DB_USER}
       - POSTGRES_PASSWORD=${DJGO_DB_PASSWD}
-    
+
+  nginx:
+    build: 
+      context: .
+      dockerfile: ./dockerfiles/nginx/Dockerfile
+    ports:
+      - 1337:80
+      - 443:443
+    volumes:
+      - static_volume:/app/staticfiles
+    depends_on:
+      - djgo_app
+  
 volumes:
   postgres_data:
+  static_volume:
