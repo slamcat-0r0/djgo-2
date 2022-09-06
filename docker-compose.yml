@@ -31,7 +31,7 @@ services:
       - DJGO_ALLOWED_HOSTS=${DJGO_ALLOWED_HOSTS}
 
     command: >
-      python3 .././python-entrypoint.py
+      .././wait-for-it.sh djgo_db:5432 --timeout=50 --strict -- python3 .././python-entrypoint.py
       
     depends_on:
       - djgo_db
@@ -56,6 +56,8 @@ services:
       - static_volume:/app/staticfiles
     depends_on:
       - djgo_app
+    command: >
+      ./wait-for-it.sh djgo_app:8000 --timeout=50 --strict -- nginx -g "daemon off;"
   
 volumes:
   postgres_data:

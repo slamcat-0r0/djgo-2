@@ -9,8 +9,6 @@ import time
 
 if __name__ == "__main__":
 
-    time.sleep(15)
-
     os.system("python3 manage.py makemigrations")
     os.system("python3 manage.py migrate")
     os.system("python3 manage.py collectstatic --noinput")

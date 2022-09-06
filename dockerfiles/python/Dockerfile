@@ -2,7 +2,6 @@
 FROM python:3.9.9-slim-buster
 LABEL maintainer = "mign.pl"
 
-
 ENV PYTHONUNBUFFERED 1
 
 RUN apt-get update && apt-get install -y \
@@ -17,22 +16,18 @@ RUN apt-get update && apt-get install -y \
 	iputils-ping \
 	--no-install-recommends apt-utils && rm -rf /var/lib/apt/lists/*
 
-# RUN apk update && apk add \
-#     bash \
-#     py3-pip \
-#     gcc \
-#     python3-dev \
-#     postgresql-dev \
-#     musl-dev
-
-RUN pip3 install --upgrade pip
 
 COPY ./app /app
-RUN pip3 install -r ./app/requirements.txt
-COPY ./entrypoints/python-entrypoint.py /python-entrypoint.py
-RUN chmod 755 ../python-entrypoint.py
+COPY ./entrypoints/python-entrypoint.py /
+COPY ./wait-for-it.sh /
 
 RUN useradd -ms /bin/bash user
 RUN chown user -R /app/
+
+RUN chmod u=rwx,g=rwx,o=rwx ../wait-for-it.sh
+RUN chmod u=rwx,g=rwx,o=rwx ../python-entrypoint.py
+
+RUN pip3 install --upgrade pip
+RUN pip3 install -r ./app/requirements.txt
 
 WORKDIR /app
